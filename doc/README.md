@@ -224,11 +224,11 @@ static void producer(void *arg) {//生产者
 因为这样**极其不公平的调度**导致consumer根本拿不到cpu，就会在producer卡死，因此我们要尽可能会调度到每一个协程，其实微微改一下就行了：
 ```C
 struct co *co_next = current;
-        do
-        {
-            co_next = co_next->next;
-        } while (co_next->status == CO_DEAD || co_next->status == CO_WAITING);
-        current = co_next;
+do
+{
+    co_next = co_next->next;
+} while (co_next->status == CO_DEAD || co_next->status == CO_WAITING);
+current = co_next;
 ```
 非常小的改动，do-while使它必定会先走一下next，如果next指向的协程可以调度，那就调度到该协程，如果不能，继续换。这样能够在这样的循环链表中不断循环，使每个人都得到公平调度。也符合协程调度yeild()是想让出去的这一意义，所以无论如何，先看看下个协程能否调度可以完美避免（或许吧😰）这个bug。
 

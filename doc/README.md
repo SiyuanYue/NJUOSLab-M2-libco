@@ -182,11 +182,11 @@ return start;
     h->next = h->next->next;
     free(co);
 ```
-但麻烦的时调度，容易出bug。
+但调度变得，就会容易出bug。
 一开始的想法是环形链表，直接调度current->next的协程即可。结果出了bug。
 因为next指向的协程不一定可以被调度。
 ```C
-		struct co *co_next = current;
+	struct co *co_next = current;
         while (co_next->status == CO_DEAD || co_next->status == CO_WAITING);
         {
             co_next = co_next->next;
